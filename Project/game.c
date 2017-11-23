@@ -270,6 +270,7 @@ void main()
     //  printf('%d',axisx);
     movLayerDraw(&m11, &layer1); 
     movLayerDraw(&ml0, &layer0);
+    //hello
   }
 }
 
