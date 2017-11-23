@@ -299,7 +299,7 @@ void main()
  u_int switches = p2sw_read(), i;
     char str[5];
    
-     if((switches & (1<<0))==0){
+     if((switches & (1<<1))==0){
        movePaddleUP(&m11);
      }
      else if((switches & (1<<1))==0){
