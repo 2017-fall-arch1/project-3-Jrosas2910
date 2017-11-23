@@ -15,14 +15,18 @@
 #include <shape.h>
 #include <abCircle.h>
 
-#define GREEN_LED BIT6
 
-AbRect rect10 = {abRectGetBounds, abRectCheck, {10,10}}; /**< 10x10 rectangle */
+#define GREEN_LED BIT6
+int player1Score=0;
+int player2Score=0;
+char snumPlayer1[5];
+char snumPlayer2[5];
+AbRect rect10 = {abRectGetBounds, abRectCheck, {2,12}}; /**< 10x10 rectangle */
 AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30};
 
 AbRectOutline fieldOutline = {	/* playing field */
   abRectOutlineGetBounds, abRectOutlineCheck,   
-  {(screenWidth/2)-1, (screenHeight/2)-1 }
+  {(screenWidth/2)-1, (screenHeight/2)-10 }
 };
 Layer fieldLayer = {		/* playing field as a layer */
   (AbShape *) &fieldOutline,
@@ -44,7 +48,7 @@ Layer layer0 = {
 
 Layer layer1 = {
   (AbShape *)&rect10,
-  {(screenWidth/2)-20,(screenHeight/2)-20},
+  {(screenWidth/2)-60,(screenHeight/2)+20},
   {0,0},{0,0},
   COLOR_ORANGE,
 &layer0
@@ -101,7 +105,19 @@ void movLayerDraw(MovLayer *movLayers, Layer *layers)
   } // for moving layer being updated
 }	  
 
-
+void movePaddleUP(MovLayer *ml,int mov){
+  Vec2 newPos;
+  u_char axis;
+  Region shapeBoundary;
+    abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
+     		  
+		  newPos.axes[1] +=  5;
+	     	        
+      
+     /**< for axis */
+     ml->layer->posNext = newPos;
+  /**< for ml */
+}
 
 //Region fence = {{10,30}, {SHORT_EDGE_PIXELS-10, LONG_EDGE_PIXELS-10}}; /**< Create a fence region */
 
@@ -123,30 +139,43 @@ void mlAdvance(MovLayer *ml,MovLayer *m2, Region *fence,Region *player1,Region *
   for (; ml; ml = ml->next) {
     
     vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
+    vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
-    //    abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
+  abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
     for (axis = 0; axis < 2; axis ++) {
       if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) ||
 	  (shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
 	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 		newPos.axes[axis] += (2*velocity);
-		if(shapeBoundary.botRight.axes[0]== 0){
-		  //shapeBoundary.topLeft.axes[0]=.5;
+		if(shapeBoundary.topLeft.axes[0]== 0){
+		  player1Score++;
+		  itoa(player2Score,snumPlayer2,10);
+  drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
+  drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
 		  
+ 
 		  //newPos.axes[axis]=0;
 		  // velocity =0;
-		  newPos.axes[0] = 50;
-		  newPos.axes[1] = 50;
+		  
+ newPos.axes[0] = 60;
+		  newPos.axes[1] = 80;
+		  
 		  
 		}
-		//else if()
+		else if(shapeBoundary.botRight.axes[0]>120){
+		  player2Score++;
+		  itoa(player1Score,snumPlayer1,10);
+   drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
+   drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
+
+   newPos.axes[0] = 60; 
+		  newPos.axes[1] = 80;
+		 
+		}
+	        
+		
       }
-
-      /*else if((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis])||(shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
-	int velocity = 0;
-	//	newPos.axes[axis] += (2*velocity);
-
-	}*/
+      
       /**< if outside of fence */
       /*else if(shapeBoundary.topLeft.axes[1] < player1->botRight.axes[1]){
 		int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
@@ -160,7 +189,15 @@ void mlAdvance(MovLayer *ml,MovLayer *m2, Region *fence,Region *player1,Region *
      ml->layer->posNext = newPos;
   } /**< for ml */
 }
+/*void buttonStates(int i){
+  if(){
 
+  }
+  
+
+    
+
+  }*/
 
 u_int bgColor = COLOR_BLUE;     /**< The background color */
 int redrawScreen = 1;           /**< Boolean for whether screen needs to be redrawn */
@@ -176,10 +213,13 @@ void main()
   P1DIR |= GREEN_LED;		/**< Green led on when CPU on */		
   P1OUT |= GREEN_LED;
 
+
+
+  
   configureClocks();
   lcd_init();
   shapeInit();
-  p2sw_init(1);
+  p2sw_init(15);
 
   shapeInit();
 
@@ -187,24 +227,48 @@ void main()
   layerDraw(&layer0);
   layerInit(&layer1);
   layerDraw(&layer1);
-
+ 
   layerGetBounds(&fieldLayer, &fieldFence);
   layerGetBounds(&layer1, &player01);
   // layerGetBounds(&layer1,&layer1);
+	  itoa(player2Score,snumPlayer2,10);
+  drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
+  drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
 
+
+  itoa(player1Score,snumPlayer1,10);
+   drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
+   drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
+ 
+  
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
-
-  // printf('HELLOW');
-  for(;;) { 
+ 
+  for(;;) {
+    
+ 
     while (!redrawScreen) { /**< Pause CPU if screen doesn't need updating */
       P1OUT &= ~GREEN_LED;    /**< Green led off witHo CPU */
-      or_sr(0x10);	      /**< CPU OFF */
+      or_sr(0x10);
+      
+ 
+ u_int switches = p2sw_read(), i;
+    char str[5];
+    for (i = 0; i < 4; i++){
+      str[i] = (switches & (1<<i)) ? '-' : '0'+i;
+    str[4] = 0;
+    drawString5x7(20,20, str, COLOR_GREEN, COLOR_BLUE);
+   
+  }
+    /* if((switches & (1<<1))==0){
+       movePaddleUP(&m11,5);
+       }*/
+    /**< CPU OFF */
     }
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     redrawScreen = 0;
     //  printf('%d',axisx);
-     
+    movLayerDraw(&m11, &layer1); 
     movLayerDraw(&ml0, &layer0);
   }
 }
@@ -213,9 +277,17 @@ void main()
 void wdt_c_handler()
 {
   static short count = 0;
-  P1OUT |= GREEN_LED;		      /**< Green LED on when cpu on */
+  P1OUT |= GREEN_LED;
+ 
+  /**< Green LED on when cpu on */
   count ++;
-  if (count == 15) {
+  if (count == 15){
+    /* for (i = 0; i < 4; i++){
+      str[i] = (switches & (1<<i)) ? '-' : '0'+i;
+    str[4] = 0;
+     drawString5x7(20,20, str, COLOR_GREEN, COLOR_BLUE);
+     }*/
+     
     mlAdvance(&ml0,&m11, &fieldFence,&player01,&player02);
     
     if (p2sw_read())
