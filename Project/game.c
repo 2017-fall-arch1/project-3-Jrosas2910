@@ -48,7 +48,7 @@ Layer layer0 = {
 
 Layer layer1 = {
   (AbShape *)&rect10,
-  {(screenWidth/2)-60,(screenHeight/2)+20},
+  {(screenWidth/2)-55,(screenHeight/2)+20},
   {0,0},{0,0},
   COLOR_ORANGE,
 &layer0
@@ -120,47 +120,48 @@ void movePaddleUP(MovLayer *ml){
   u_char axis;
   Region shapeBoundary;
   Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
-  for (; ml; ml = ml->next) {
+  //  for (; ml; ml = ml->next) {
     
-    vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
-    //vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
+  vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
+     //vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
     //abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
-     if(newPos.axes[1] > 0 && newPos.axes[1] < 140){
+    //if(newPos.axes[1] > 0 && newPos.axes[1] < 140){
     
-  		newPos.axes[1] += .1;
+  		newPos.axes[0] += .1;
         
      /**< for axis */
      ml->layer->posNext = newPos;
-      }
+     // }
   /**< for ml */
     
-  }
+  //}
 }
 
-void movePaddleDOWN(MovLayer *ml){
+void movePaddleDOWN(MovLayer *m3){
    Vec2 newPos;
   Vec2 player1NewPos;
   Vec2 player2NewPos;
   u_char axis;
   Region shapeBoundary;
   Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
-  for (; ml; ml = ml->next) {
+  //for (; ml; ml = ml->next) {
     
-    vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
+  vec2Add(&newPos, &m3->layer->posNext, &m3->velocity);
     //vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
-    abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
+    abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
+  
     //abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
-     if(newPos.axes[1] < 0 && newPos.axes[1] < 140){
+    // if(newPos.axes[1] < 0 && newPos.axes[1] < 140){
     
-  		newPos.axes[1] -= .1;
+    newPos.axes[0] -= .1;
         
      /**< for axis */
-     ml->layer->posNext = newPos;
-      }
+		  m3->layer->posNext = newPos;
+     // }
   /**< for ml */
     
-  }
+  //}
 }
 
 //Region fence = {{10,30}, {SHORT_EDGE_PIXELS-10, LONG_EDGE_PIXELS-10}}; /**< Create a fence region */
@@ -299,10 +300,10 @@ void main()
  u_int switches = p2sw_read(), i;
     char str[5];
    
-     if((switches & (1<<0))==0){
+     if((switches & (1<<1))==0){
        movePaddleUP(&m11);
      }
-     else if((switches & (1<<1))==0){
+     else if((switches & (1<<0))==0){
        movePaddleDOWN(&m11);
      }
     /**< CPU OFF */
