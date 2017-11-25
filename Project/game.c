@@ -21,6 +21,7 @@ int player1Score=0;
 int player2Score=0;
 char snumPlayer1[5];
 char snumPlayer2[5];
+char splay1[5];
 AbRect rect10 = {abRectGetBounds, abRectCheck, {2,12}}; /**< 10x10 rectangle */
 AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30};
 
@@ -103,41 +104,43 @@ void movLayerDraw(MovLayer *movLayers, Layer *layers)
       } // for col
     } // for row
   } // for moving layer being updated
-}	  
-void movePaddleUP(MovLayer *ml){
-  /*  Vec2 newPos;
+}
+void vect2AddNew(Vec2 *result, const Vec2 *v1, const Vec2 *v2){
   u_char axis;
-  Region shapeBoundary;
-    abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
-
-    if(newPos.axes[1] > 0 && newPos.axes[1] < 160){
-		  newPos.axes[1] -=  .0001;
-	     	        
-		  }*/
+  for(axis=0;axis < 2; axis ++){
+    result->axes[axis] = v1->axes[axis] + v2->axes[axis];
+    
+  }
+}
+/*
+Method to move new position of paddle down when button is pressed
+ */
+void movePaddleUP(MovLayer *ml){
    Vec2 newPos;
   Vec2 player1NewPos;
   Vec2 player2NewPos;
   u_char axis;
   Region shapeBoundary;
   Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
-  //  for (; ml; ml = ml->next) {
-    
+  //set a boundary
+  if(newPos.axes[1]<272) {
   vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
-     //vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
+ 
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
-    //abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
-    //if(newPos.axes[1] > 0 && newPos.axes[1] < 140){
     
-  		newPos.axes[0] += .1;
-        
-     /**< for axis */
-     ml->layer->posNext = newPos;
-     // }
-  /**< for ml */
-    
-  //}
+    itoa(newPos.axes[1],splay1,10);
+   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  		newPos.axes[1] += 2;
+		newPos.axes[0] = 10;
+		ml->layer->posNext = newPos;
 }
-
+ else{
+   //stop paddle
+ } 
+}
+/*
+Method to move new position of paddle down when button is pressed
+ */
 void movePaddleDOWN(MovLayer *m3){
    Vec2 newPos;
   Vec2 player1NewPos;
@@ -145,23 +148,18 @@ void movePaddleDOWN(MovLayer *m3){
   u_char axis;
   Region shapeBoundary;
   Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
-  //for (; ml; ml = ml->next) {
-    
-  vec2Add(&newPos, &m3->layer->posNext, &m3->velocity);
-    //vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
-    abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
+    if(newPos.axes[1]<272) {
+  vec2Sub(&newPos, &m3->layer->posNext, &m3->velocity);
+      abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
+    itoa(newPos.axes[1],splay1,10);
+   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  		newPos.axes[1] -= 2;
+		newPos.axes[0] = 10;
+  		  m3->layer->posNext = newPos;
   
-    //abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
-    // if(newPos.axes[1] < 0 && newPos.axes[1] < 140){
-    
-    newPos.axes[0] -= .1;
-        
-     /**< for axis */
-		  m3->layer->posNext = newPos;
-     // }
-  /**< for ml */
-    
-  //}
+    }else{
+      //stop paddle
+    }
 }
 
 //Region fence = {{10,30}, {SHORT_EDGE_PIXELS-10, LONG_EDGE_PIXELS-10}}; /**< Create a fence region */
@@ -276,7 +274,7 @@ void main()
   layerGetBounds(&fieldLayer, &fieldFence);
   layerGetBounds(&layer1, &player01);
   // layerGetBounds(&layer1,&layer1);
-	  itoa(player2Score,snumPlayer2,10);
+  itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
   drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
 
