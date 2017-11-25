@@ -54,6 +54,13 @@ Layer layer1 = {
   COLOR_ORANGE,
 &layer0
 };
+Layer layer2 = {
+  (AbShape *)&rect10,
+  {(screenWidth/2)+55,(screenHeight/2)+20},
+  {0,0},{0,0},
+  COLOR_ORANGE,
+&layer0
+};
 /** Moving Layer
  *  Linked list of layer references
  *  Velocity represents one iteration of change (direction & magnitude)
@@ -68,6 +75,7 @@ typedef struct MovLayer_s {
  
 MovLayer ml0 = { &layer0, {2,1}, 0 }; 
 MovLayer m11 = {&layer1, {1,1},0};
+MovLayer m12 = {&layer2, {1,1},0};
 void movLayerDraw(MovLayer *movLayers, Layer *layers)
 {
   int row, col;
@@ -115,7 +123,7 @@ void vect2AddNew(Vec2 *result, const Vec2 *v1, const Vec2 *v2){
 /*
 Method to move new position of paddle down when button is pressed
  */
-void movePaddleUP(MovLayer *ml){
+void moveLeftPaddleUP(MovLayer *ml){
    Vec2 newPos;
   Vec2 player1NewPos;
   Vec2 player2NewPos;
@@ -141,7 +149,7 @@ void movePaddleUP(MovLayer *ml){
 /*
 Method to move new position of paddle down when button is pressed
  */
-void movePaddleDOWN(MovLayer *m3){
+void moveLeftPaddleDOWN(MovLayer *m3){
    Vec2 newPos;
   Vec2 player1NewPos;
   Vec2 player2NewPos;
@@ -161,6 +169,55 @@ void movePaddleDOWN(MovLayer *m3){
       //stop paddle
     }
 }
+/*
+Method to move new position of paddle down when button is pressed
+ */
+void moveRightPaddleUP(MovLayer *ml){
+   Vec2 newPos;
+  Vec2 player1NewPos;
+  Vec2 player2NewPos;
+  u_char axis;
+  Region shapeBoundary;
+  Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
+  //set a boundary
+  if(newPos.axes[1]<272) {
+  vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
+ 
+    abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
+    
+    itoa(newPos.axes[1],splay1,10);
+   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  		newPos.axes[1] += 2;
+		newPos.axes[0] = 120;
+		ml->layer->posNext = newPos;
+}
+ else{
+   //stop paddle
+ } 
+}
+/*
+Method to move new position of paddle down when button is pressed
+ */
+void moveRightPaddleDOWN(MovLayer *m3){
+   Vec2 newPos;
+  Vec2 player1NewPos;
+  Vec2 player2NewPos;
+  u_char axis;
+  Region shapeBoundary;
+  Region shapeBoundaryMovSqrs1,shapeBoundaryMovSqrs2;
+    if(newPos.axes[1]<272) {
+  vec2Sub(&newPos, &m3->layer->posNext, &m3->velocity);
+      abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
+    itoa(newPos.axes[1],splay1,10);
+   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  		newPos.axes[1] -= 2;
+		newPos.axes[0] = 120;
+  		  m3->layer->posNext = newPos;
+  
+    }else{
+      //stop paddle
+    }
+}
 
 //Region fence = {{10,30}, {SHORT_EDGE_PIXELS-10, LONG_EDGE_PIXELS-10}}; /**< Create a fence region */
 
@@ -171,7 +228,7 @@ void movePaddleDOWN(MovLayer *m3){
  */
 //int axisx;
 // int axisy;
-void mlAdvance(MovLayer *ml,MovLayer *m2, Region *fence,Region *player1,Region *player2)
+void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *player1,Region *player2)
 {
   Vec2 newPos;
   Vec2 player1NewPos;
@@ -270,10 +327,14 @@ void main()
   layerDraw(&layer0);
   layerInit(&layer1);
   layerDraw(&layer1);
+
+  layerInit(&layer2);
+  layerDraw(&layer2);
+  
  
   layerGetBounds(&fieldLayer, &fieldFence);
   layerGetBounds(&layer1, &player01);
-  // layerGetBounds(&layer1,&layer1);
+   layerGetBounds(&layer2,&player02);
   itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
   drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
@@ -297,12 +358,19 @@ void main()
  
  u_int switches = p2sw_read(), i;
     char str[5];
-   
-     if((switches & (1<<1))==0){
-       movePaddleUP(&m11);
+    //States to move paddles up and down
+     
+     if((switches & (1<<0))==0){
+       moveLeftPaddleDOWN(&m11);
      }
-     else if((switches & (1<<0))==0){
-       movePaddleDOWN(&m11);
+     else if((switches & (1<<1))==0){
+       moveLeftPaddleUP(&m11);
+     }
+     else if((switches & (1<<2))==0){
+       moveRightPaddleDOWN(&m12);
+     }
+     else if((switches & (1<<3))==0){
+       moveRightPaddleUP(&m12);
      }
     /**< CPU OFF */
     }
@@ -311,6 +379,7 @@ void main()
     //  printf('%d',axisx);
     movLayerDraw(&m11, &layer1); 
     movLayerDraw(&ml0, &layer0);
+     movLayerDraw(&m12,&layer2);
     //hello
   }
 }
@@ -330,7 +399,7 @@ void wdt_c_handler()
      drawString5x7(20,20, str, COLOR_GREEN, COLOR_BLUE);
      }*/
      
-    mlAdvance(&ml0,&m11, &fieldFence,&player01,&player02);
+    mlAdvance(&ml0,&m11, &m12,&fieldFence,&player01,&player02);
     
     if (p2sw_read())
       redrawScreen = 1;
