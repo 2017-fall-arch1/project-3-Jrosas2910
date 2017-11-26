@@ -14,7 +14,7 @@
 #include <p2switches.h>
 #include <shape.h>
 #include <abCircle.h>
-
+#include "sound.h"
 
 #define GREEN_LED BIT6
 int player1Score=0;
