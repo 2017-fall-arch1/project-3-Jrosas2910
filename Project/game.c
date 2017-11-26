@@ -136,8 +136,8 @@ void moveLeftPaddleUP(MovLayer *ml){
  
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
     
-    itoa(newPos.axes[1],splay1,10);
-   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+    // itoa(newPos.axes[1],splay1,10);
+    // drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		newPos.axes[1] += 2;
 		newPos.axes[0] = 10;
 		ml->layer->posNext = newPos;
@@ -159,8 +159,8 @@ void moveLeftPaddleDOWN(MovLayer *m3){
     if(newPos.axes[1]<272) {
   vec2Sub(&newPos, &m3->layer->posNext, &m3->velocity);
       abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
-    itoa(newPos.axes[1],splay1,10);
-   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+      // itoa(newPos.axes[1],splay1,10);
+      // drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		newPos.axes[1] -= 2;
 		newPos.axes[0] = 10;
   		  m3->layer->posNext = newPos;
@@ -185,8 +185,8 @@ void moveRightPaddleUP(MovLayer *ml){
  
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
     
-    itoa(newPos.axes[1],splay1,10);
-   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+    // itoa(newPos.axes[1],splay1,10);
+    // drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		newPos.axes[1] += 2;
 		newPos.axes[0] = 120;
 		ml->layer->posNext = newPos;
@@ -208,8 +208,8 @@ void moveRightPaddleDOWN(MovLayer *m3){
     if(newPos.axes[1]<272) {
   vec2Sub(&newPos, &m3->layer->posNext, &m3->velocity);
       abShapeGetBounds(m3->layer->abShape, &newPos, &shapeBoundary);
-    itoa(newPos.axes[1],splay1,10);
-   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+      // itoa(newPos.axes[1],splay1,10);
+      //  drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		newPos.axes[1] -= 2;
 		newPos.axes[0] = 120;
   		  m3->layer->posNext = newPos;
@@ -247,8 +247,10 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 	  (shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
 	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 		newPos.axes[axis] += (2*velocity);
-		if(shapeBoundary.topLeft.axes[0]== 0){
-		  player1Score++;
+		  itoa(newPos.axes[axis],splay1,10);
+   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE);
+    	if(shapeBoundary.topLeft.axes[0]== 0){
+  		  player1Score++;
 		  itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
   drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
@@ -275,7 +277,12 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 	        
 		
       }
-      
+    
+      /*      else if((shapeBoundary.topLeft.axes[0] < player1->botRight.axes[0])){
+	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+		newPos.axes[axis] += (2*velocity);
+		}*/
+	
       /**< if outside of fence */
       /*else if(shapeBoundary.topLeft.axes[1] < player1->botRight.axes[1]){
 		int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
@@ -285,7 +292,8 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		//axisy=newPos.axes[1];
 		//printf('%d',newPos);
 		}*/
-    } /**< for axis */
+     /**< for axis */
+    }		
      ml->layer->posNext = newPos;
   } /**< for ml */
 }
