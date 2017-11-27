@@ -2,7 +2,8 @@
 #define sound_included
 //global variable state
 extern char state;
-void sound_init(char n);
+extern char play;
+void sound_init();
 void sound_advance_frequency();
 void soundOne();
 void soundTwo();

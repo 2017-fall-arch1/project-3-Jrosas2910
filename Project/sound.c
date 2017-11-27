@@ -1,17 +1,18 @@
 #include <msp430.h>
 #include "libTimer.h"
 #include "sound.h"
-
-
+#include <lcdutils.h>
+char s1[5];
 static unsigned int period = 1000;
-static signed int rate = 500;	
+static signed int rate = 200;	
 char state;
+char play;
 #define MIN_PERIOD 1000
-#define MAX_PERIOD 10000
+#define MAX_PERIOD 1200
 
 
 
-void sound_init(char n)
+void sound_init()
 {
     /* 
        Direct timer A output "TA0.1" to P2.6.  
@@ -26,7 +27,7 @@ void sound_init(char n)
     P2SEL |= BIT6;
     P2DIR = BIT6;		/* enable output to speaker (P2.6) */
     // state = '2';
-    state = n;
+   
      sound_advance_frequency();/* start buzzing!!! */
 
 
@@ -36,32 +37,35 @@ Handle sound states
  */
 void sound_advance_frequency() 
 {
-
+  if(play=='1'){
+    rate =200;
   soundOne();
   sound_set_period(period);
 
+  }
+  else{
+    rate = 0;
+    period = 1000;
+  }
 }
 /*
 Sound One 
  */
 void soundOne(){
-  period += rate;
-  if ( period > 1000  && period <= 2000)   {
-    period += (rate <<7);
+  
+  if ( period >= 1000  && period < 1200)   {
+    period += rate;
     // printf("\nPeriodTop= %d",period);
     }
-  else if(period > 4000 && period <=6000){
-    period += (rate <<5);
-    
-    // printf("\nPeriodTop= %d",period);
-    
+  
+  else if(period >= MAX_PERIOD){
+   play = '0';
+   //itoa(period,s1,10);
+   // drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
+  
+   
   }
-  else if(period >4000 && period <= 8000){
-    period += (rate << 9); 
-  }
-  else if(period >8000 && period <= MAX_PERIOD){
-    period += (rate << 3); 
-  }
+  
 }
 void sound_set_period(short cycles)
 {

@@ -23,6 +23,7 @@ char snumPlayer1[5];
 char snumPlayer2[5];
 char splay1[5];
 AbRect rect10 = {abRectGetBounds, abRectCheck, {2,12}}; /**< 10x10 rectangle */
+
 AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30};
 
 AbRectOutline fieldOutline = {	/* playing field */
@@ -261,9 +262,9 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		  
  newPos.axes[0] = 60;
 		  newPos.axes[1] = 80;
-		  
-		  
-		}
+		  play ='0';
+		   sound_init();
+		  		}
 		else if(shapeBoundary.botRight.axes[0]>120){
 		  player2Score++;
 		  itoa(player1Score,snumPlayer1,10);
@@ -272,12 +273,12 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 
    newPos.axes[0] = 60; 
 		  newPos.axes[1] = 80;
-		 
-		}
-	        
-		
+		  play = '1';
+		   sound_init();
+		}	
       }
-    
+
+      
       /*      else if((shapeBoundary.topLeft.axes[0] < player1->botRight.axes[0])){
 	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 		newPos.axes[axis] += (2*velocity);
@@ -293,8 +294,8 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		//printf('%d',newPos);
 		}*/
      /**< for axis */
-    }		
-     ml->layer->posNext = newPos;
+    }
+       ml->layer->posNext = newPos;
   } /**< for ml */
 }
 /*void buttonStates(int i){
@@ -328,7 +329,7 @@ void main()
   lcd_init();
   shapeInit();
   p2sw_init(15);
-
+  //sound_init();
   shapeInit();
 
   layerInit(&layer0);
@@ -347,7 +348,7 @@ void main()
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
   drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
 
-
+  //sound_init();
   itoa(player1Score,snumPlayer1,10);
    drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
    drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
@@ -397,7 +398,9 @@ void wdt_c_handler()
 {
   static short count = 0;
   P1OUT |= GREEN_LED;
- 
+  static char second_count = 0, decisecond_count = 0;
+  //When Global variable state changes change the pattern of flashing of lights
+  
   /**< Green LED on when cpu on */
   count ++;
   if (count == 15){
@@ -413,5 +416,19 @@ void wdt_c_handler()
       redrawScreen = 1;
     count = 0;
   } 
+  
+  //   led_update();
+  
+  
+  if(++decisecond_count == 25){
+    
+    if(play =='1'){
+      
+    sound_advance_frequency();
+    decisecond_count=0;
+    }
+  }
+  
+
   P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */
 }
