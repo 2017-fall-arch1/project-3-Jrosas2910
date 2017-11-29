@@ -25,6 +25,7 @@ Region shapeBoundaryMovSqrs2;
 int velocity;
 int paddle1PosSize=-10;
 int paddle2PosSize=10;
+char play='0';
 int player1Score=0;
 int player2Score=0;
 char snumPlayer1[5];
@@ -274,12 +275,16 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
       
      if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) ||
 	  (shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
- int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-		newPos.axes[axis] += (2*velocity);
+       //sound_init();
+       
+       int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+
+ newPos.axes[axis] += (2*velocity);
 		//		  itoa(newPos.axes[axis],splay1,10);
 		// drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE);
 			if(shapeBoundary.topLeft.axes[0]<= 0){
-  		  player1Score++;
+			  // play='1';
+			  player1Score++;
 		  itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
   drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
@@ -290,10 +295,11 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		  
  newPos.axes[0] = 60;
 		  newPos.axes[1] = 80;
-		  play ='0';
-		  //sound_init();
+		  //play ='0';
+		  
 		  		}
 		else if(shapeBoundary.botRight.axes[0]>=120){
+		  // play='1';
 		  player2Score++;
 		  itoa(player1Score,snumPlayer1,10);
    drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
@@ -301,8 +307,8 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 
    newPos.axes[0] = 60; 
 		  newPos.axes[1] = 80;
-		  play = '1';
-		  //sound_init();
+		  // play = '0';
+		  // sound_init();
 
 		}
 		
@@ -316,6 +322,7 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
         velocity = ml->velocity.axes[axis] = -ml->velocity.axes[0];
  newPos.axes[axis] += (2*velocity); 
 	       velocity =1;
+	       // play ='0';
 	      //     }
 	 //else if(counter[1] > counter[0]){
 	      //  else {
@@ -345,6 +352,7 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 	      newPos.axes[axis] += (2*velocity); 
 
 	      velocity=-1;
+	      //	       play ='0';
 	      // }
 
 	      // reset='T';
@@ -394,7 +402,7 @@ void main()
   lcd_init();
   shapeInit();
   p2sw_init(15);
-  //sound_init();
+  sound_init();
   shapeInit();
 
   layerInit(&layer0);
@@ -492,6 +500,10 @@ void wdt_c_handler()
     sound_advance_frequency();
     decisecond_count=0;
     }
+    else{
+
+    }
+    
   }
   
 

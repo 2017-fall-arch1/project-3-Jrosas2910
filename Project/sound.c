@@ -4,11 +4,11 @@
 #include <lcdutils.h>
 char s1[5];
 static unsigned int period = 1000;
-static signed int rate = 200;	
+static signed int rate = 500;	
 char state;
 char play;
 #define MIN_PERIOD 1000
-#define MAX_PERIOD 1200
+#define MAX_PERIOD 1500
 
 
 
@@ -45,26 +45,31 @@ void sound_advance_frequency()
   }
   else{
     rate = 0;
-    period = 1000;
+    // period = 1000;
   }
 }
 /*
 Sound One 
  */
 void soundOne(){
-  
-  if ( period >= 1000  && period < 1200)   {
-    period += rate;
+  //period +=rate;
+  if ( period >= 1000  && period < 2000)   {
+    rate += 500;
     // printf("\nPeriodTop= %d",period);
     }
   
-  else if(period >= MAX_PERIOD){
+  else if(period >= 300){
    play = '0';
+   rate = 0;
+   
    //itoa(period,s1,10);
    // drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
   
    
   }
+  itoa(period,s1,10);
+    drawString5x7(40,80, s1 , COLOR_GREEN, COLOR_BLUE);
+  
   
 }
 void sound_set_period(short cycles)
