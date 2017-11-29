@@ -251,7 +251,8 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
   for (; ml; ml = ml->next) {
     
     vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
-    vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
+        vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
+	    vec2Add(&player2NewPos, &m3->layer->posNext, &m3->velocity);
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
   abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
  abShapeGetBounds(m3->layer->abShape,&player2NewPos,&shapeBoundaryMovSqrs2);
@@ -298,7 +299,7 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		newPos.axes[axis] += (2*velocity);
 
       }
-            else if(shapeBoundary.botRight.axes[0]>=shapeBoundaryMovSqrs2.topLeft.axes[0]&&(shapeBoundary.botRight.axes[1]<=shapeBoundaryMovSqrs2.topLeft.axes[1]&&shapeBoundary.botRight.axes[1]>=shapeBoundaryMovSqrs2.topLeft.axes[1]+25)){
+            else if(shapeBoundary.botRight.axes[0]>=shapeBoundaryMovSqrs2.topLeft.axes[0]&&(shapeBoundary.botRight.axes[1] >= shapeBoundaryMovSqrs2.topLeft.axes[1]&&shapeBoundary.botRight.axes[1]<=shapeBoundaryMovSqrs2.topLeft.axes[1]+25)){
 	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 		newPos.axes[axis] += (2*velocity);
 
