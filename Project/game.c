@@ -160,10 +160,9 @@ Method to move new position of paddle down when button is pressed
 void moveLeftPaddleDOWN(MovLayer *m3){
    Vec2 newPos;
   
-  Vec2 player2NewPos;
-  u_char axis;
+    u_char axis;
   Region shapeBoundary;
-  Region shapeBoundaryMovSqrs2;
+  
 abShapeGetBounds(m3->layer->abShape, &player1NewPos, &shapeBoundaryMovSqrs1);
   if(shapeBoundaryMovSqrs1.botRight.axes[1]<149) {
   vec2Add(&player1NewPos, &m3->layer->posNext, &m3->velocity);
@@ -245,17 +244,19 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 {
   Vec2 newPos;
   // Vec2 player1NewPos;
-  Vec2 player2NewPos;
+
   u_char axis;
   Region shapeBoundary;
-  Region shapeBoundaryMovSqrs2;
+ 
   for (; ml; ml = ml->next) {
     
     vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
     vec2Add(&player1NewPos, &m2->layer->posNext, &m2->velocity);
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
   abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
-    for (axis = 0; axis < 2; axis ++) {
+ abShapeGetBounds(m3->layer->abShape,&player2NewPos,&shapeBoundaryMovSqrs2);
+ 
+  for (axis = 0; axis < 2; axis ++) {
       
       if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) ||
 	  (shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
@@ -287,7 +288,6 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
    newPos.axes[0] = 60; 
 		  newPos.axes[1] = 80;
 		  play = '1';
-	
 		  //sound_init();
 		  }
 
@@ -298,6 +298,17 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		newPos.axes[axis] += (2*velocity);
 
       }
+            else if(shapeBoundary.botRight.axes[0]>=shapeBoundaryMovSqrs2.topLeft.axes[0]&&(shapeBoundary.botRight.axes[1]<=shapeBoundaryMovSqrs2.topLeft.axes[1]&&shapeBoundary.botRight.axes[1]>=shapeBoundaryMovSqrs2.topLeft.axes[1]+25)){
+	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+		newPos.axes[axis] += (2*velocity);
+
+      }
+
+      /*      else if(shapeBoundary.botRight.axes[0] >= shapeBoundaryMovSqrs2.topLeft.axes[0]){
+	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+		newPos.axes[axis] += (2*velocity);
+
+		}*/
 	
       /*if(shapeBoundary.topLeft.axes[0]<= 0){
   		  player1Score++;
