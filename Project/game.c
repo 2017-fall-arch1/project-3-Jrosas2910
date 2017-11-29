@@ -19,9 +19,10 @@
 #define GREEN_LED BIT6
 Vec2 player1NewPos;
 Region shapeBoundaryMovSqrs1;
+int counter[2];
 Vec2 player2NewPos;
 Region shapeBoundaryMovSqrs2;
-
+int velocity;
 int paddle1PosSize=-10;
 int paddle2PosSize=10;
 int player1Score=0;
@@ -29,6 +30,7 @@ int player2Score=0;
 char snumPlayer1[5];
 char snumPlayer2[5];
 char splay1[5];
+char reset = 'F';
 AbRect rect10 = {abRectGetBounds, abRectCheck, {2,12}}; /**< 10x10 rectangle */
 
 AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30};
@@ -82,8 +84,8 @@ typedef struct MovLayer_s {
 /* initial value of {0,0} will be overwritten */
  
 MovLayer ml0 = { &layer0, {2,1}, 0 }; 
-MovLayer m11 = {&layer1, {1,1},0};
-MovLayer m12 = {&layer2, {1,1},0};
+MovLayer m11 = {&layer1, {2,1},0};
+MovLayer m12 = {&layer2, {2,1},0};
 void movLayerDraw(MovLayer *movLayers, Layer *layers)
 {
   int row, col;
@@ -196,10 +198,10 @@ void moveRightPaddleUP(MovLayer *m3){
     if(shapeBoundaryMovSqrs2.topLeft.axes[1]>15) {
   vec2Sub(&player2NewPos, &m3->layer->posNext, &m3->velocity);
       
-       itoa(shapeBoundaryMovSqrs2.topLeft.axes[1],splay1,10);
-        drawString5x7(30,30, "UP", COLOR_GREEN, COLOR_BLUE);
-       drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
-  		player2NewPos.axes[1] -= 2;
+  // itoa(shapeBoundaryMovSqrs2.topLeft.axes[1],splay1,10);
+       //      drawString5x7(30,30, "UP", COLOR_GREEN, COLOR_BLUE);
+  //   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  		player2NewPos.axes[1] -= 5;
 		player2NewPos.axes[0] = 120;
   		  m3->layer->posNext = player2NewPos;
   
@@ -222,7 +224,7 @@ abShapeGetBounds(m3->layer->abShape, &player2NewPos, &shapeBoundaryMovSqrs2);
   if(shapeBoundaryMovSqrs2.botRight.axes[1]<149) {
   vec2Add(&player2NewPos, &m3->layer->posNext,&m3->velocity);
     
-  		player2NewPos.axes[1] += 2;
+  		player2NewPos.axes[1] += 5;
 		player2NewPos.axes[0] = 120;
   		  m3->layer->posNext = player2NewPos;
   
@@ -240,6 +242,7 @@ abShapeGetBounds(m3->layer->abShape, &player2NewPos, &shapeBoundaryMovSqrs2);
  */
 //int axisx;
 // int axisy;
+int count = 0;
 void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *player1,Region *player2)
 {
   Vec2 newPos;
@@ -247,6 +250,7 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 
   u_char axis;
   Region shapeBoundary;
+  
  
   for (; ml; ml = ml->next) {
     
@@ -256,16 +260,25 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
   abShapeGetBounds(m2->layer->abShape,&player1NewPos,&shapeBoundaryMovSqrs1);
  abShapeGetBounds(m3->layer->abShape,&player2NewPos,&shapeBoundaryMovSqrs2);
+
+ /* if(reset=='F'&&count<=1){
+ counter[count]=shapeBoundary.topLeft.axes[0];
+ count++;
+ }
+ else if(reset=='T'){
+   count=0;
+   reset='F';
+   }*/
  
   for (axis = 0; axis < 2; axis ++) {
       
-      if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) ||
+     if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) ||
 	  (shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]) ) {
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+ int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 		newPos.axes[axis] += (2*velocity);
 		//		  itoa(newPos.axes[axis],splay1,10);
 		// drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE);
-		if(shapeBoundary.topLeft.axes[0]<= 0){
+			if(shapeBoundary.topLeft.axes[0]<= 0){
   		  player1Score++;
 		  itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
@@ -290,71 +303,63 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		  newPos.axes[1] = 80;
 		  play = '1';
 		  //sound_init();
-		  }
 
-      }
-      
-      else if(shapeBoundary.topLeft.axes[0]<=shapeBoundaryMovSqrs1.botRight.axes[0]&&(shapeBoundary.topLeft.axes[1]<=shapeBoundaryMovSqrs1.botRight.axes[1]&&shapeBoundary.topLeft.axes[1]>=shapeBoundaryMovSqrs1.botRight.axes[1]-25)){
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-		newPos.axes[axis] += (2*velocity);
-
-      }
-            else if(shapeBoundary.botRight.axes[0]>=shapeBoundaryMovSqrs2.topLeft.axes[0]&&(shapeBoundary.botRight.axes[1] >= shapeBoundaryMovSqrs2.topLeft.axes[1]&&shapeBoundary.botRight.axes[1]<=shapeBoundaryMovSqrs2.topLeft.axes[1]+25)){
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-		newPos.axes[axis] += (2*velocity);
-
-      }
-
-      /*      else if(shapeBoundary.botRight.axes[0] >= shapeBoundaryMovSqrs2.topLeft.axes[0]){
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-		newPos.axes[axis] += (2*velocity);
-
-		}*/
-	
-      /*if(shapeBoundary.topLeft.axes[0]<= 0){
-  		  player1Score++;
-		  itoa(player2Score,snumPlayer2,10);
-  drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
-  drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
-		  	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
- 
-		  //newPos.axes[axis]=0;
-		  // velocity =0;
-		  
- newPos.axes[0] = 60;
-		  newPos.axes[1] = 80;
-		  play ='0';
-		  //sound_init();
-		  		}
-		else if(shapeBoundary.botRight.axes[0]>=120){
-		  player2Score++;
-		  itoa(player1Score,snumPlayer1,10);
-   drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
-   drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-   newPos.axes[0] = 60; 
-		  newPos.axes[1] = 80;
-		  play = '1';
-	
-		  //sound_init();
-		  }*/
-
-      /*      else if((shapeBoundary.topLeft.axes[0] < player1->botRight.axes[0])){
-	int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
-		newPos.axes[axis] += (2*velocity);
-		}*/
-	
-      /**< if outside of fence */
-      /*else if(shapeBoundary.topLeft.axes[1] < player1->botRight.axes[1]){
-		int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
+		}
 		
-		newPos.axes[axis] += (2*velocity);
-		//axisx=newPos.axes[0];
-		//axisy=newPos.axes[1];
-		//printf('%d',newPos);
-		}*/
+      }
+    
+     else if(shapeBoundary.topLeft.axes[0]<=shapeBoundaryMovSqrs1.botRight.axes[0]&&(shapeBoundary.topLeft.axes[1]<=shapeBoundaryMovSqrs1.botRight.axes[1]&&shapeBoundary.topLeft.axes[1]>=shapeBoundaryMovSqrs1.botRight.axes[1]-25)){
+
+
+       // if(counter[0] > counter[1]){
+       // if(velocity<=0){
+        velocity = ml->velocity.axes[axis] = -ml->velocity.axes[0];
+ newPos.axes[axis] += (2*velocity); 
+	       velocity =1;
+	      //     }
+	 //else if(counter[1] > counter[0]){
+	      //  else {
+       //	 velocity = ml->velocity.axes[axis]= +ml->velocity.axes[axis];
+       //     newPos.axes[axis] += (2*velocity); 
+
+       //     velocity =-1;
+	      // }
+	      //	reset = 'T';
+	      //  itoa(velocity,snumPlayer1,10);
+   
+	      // drawString5x7(50,50, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
+	     
+  
+      }
+      //Bounce Ball in right Paddle
+            else if(shapeBoundary.botRight.axes[0]>shapeBoundaryMovSqrs2.topLeft.axes[0]&&(shapeBoundary.botRight.axes[1] > shapeBoundaryMovSqrs2.topLeft.axes[1]&&shapeBoundary.botRight.axes[1] < shapeBoundaryMovSqrs2.topLeft.axes[1]+25)){
+		//newPos.axes[1] += ml->velocity.axes[1];
+	     
+	      //	        if(velocity<=0){
+	      //velocity = ml->velocity.axes[axis] = +ml->velocity.axes[axis];
+ // newPos.axes[axis] += (2*velocity); 
+	      //velocity=1;
+	      //  }
+	      // else {
+  velocity = ml->velocity.axes[axis]= -ml->velocity.axes[0];
+	      newPos.axes[axis] += (2*velocity); 
+
+	      velocity=-1;
+	      // }
+
+	      // reset='T';
+	      // itoa(velocity,snumPlayer1,10);
+   
+	      // drawString5x7(50,50, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
+
+	     
+	    }
+      
+
+      
      /**< for axis */
-    }
+  }
+	     
        ml->layer->posNext = newPos;
   } /**< for ml */
 }
