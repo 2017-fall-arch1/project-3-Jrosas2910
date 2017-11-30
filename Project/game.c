@@ -25,7 +25,7 @@ Region shapeBoundaryMovSqrs2;
 int velocity;
 int paddle1PosSize=-10;
 int paddle2PosSize=10;
-char play='0';
+char play;
 int player1Score=0;
 int player2Score=0;
 char snumPlayer1[5];
@@ -212,6 +212,23 @@ void moveRightPaddleUP(MovLayer *m3){
   
    
 }
+void waitFor(){
+  long secs=0;
+  long Max = 10000;
+  // unsigned int retTime = time(0)+secs;
+  //while(time(0)<retTime);
+
+  while(secs<=Max){
+    secs++;
+    play='1';
+     
+        
+  }
+  if(secs==Max){
+    play = '0';
+  }
+  // play = '0';
+}
 /*
 Method to move new position of paddle down when button is pressed
  */
@@ -295,8 +312,8 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 		  
  newPos.axes[0] = 60;
 		  newPos.axes[1] = 80;
-		  //play ='0';
-		  
+		  waitFor();
+		  //play='0';		  
 		  		}
 		else if(shapeBoundary.botRight.axes[0]>=120){
 		  // play='1';
@@ -307,9 +324,9 @@ void mlAdvance(MovLayer *ml,MovLayer *m2,MovLayer *m3, Region *fence,Region *pla
 
    newPos.axes[0] = 60; 
 		  newPos.axes[1] = 80;
-		  // play = '0';
+		  waitFor();
 		  // sound_init();
-
+		  //  play ='1';
 		}
 		
       }
@@ -402,7 +419,7 @@ void main()
   lcd_init();
   shapeInit();
   p2sw_init(15);
-  sound_init();
+   sound_init();
   shapeInit();
 
   layerInit(&layer0);
@@ -419,12 +436,12 @@ void main()
    layerGetBounds(&layer2,&player02);
   itoa(player2Score,snumPlayer2,10);
   drawString5x7(2,0, "Score Player 1:", COLOR_GREEN, COLOR_BLUE);
-  drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
+  //drawString5x7(95,0, snumPlayer2, COLOR_GREEN, COLOR_BLUE);
 
   //sound_init();
   itoa(player1Score,snumPlayer1,10);
    drawString5x7(2,152, "Score Player 2:", COLOR_GREEN, COLOR_BLUE);
-   drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
+   // drawString5x7(95,152, snumPlayer1, COLOR_GREEN, COLOR_BLUE);
  
   
   enableWDTInterrupts();      /**< enable periodic interrupt */

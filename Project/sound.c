@@ -38,7 +38,7 @@ Handle sound states
 void sound_advance_frequency() 
 {
   if(play=='1'){
-    rate =200;
+    rate =500;
   soundOne();
   sound_set_period(period);
 
@@ -53,17 +53,17 @@ Sound One
  */
 void soundOne(){
   //period +=rate;
-  if ( period >= 1000  && period < 2000)   {
-    rate += 500;
+  if ( period >= 1000  && period < 1500)   {
+    period += 500;
     // printf("\nPeriodTop= %d",period);
     }
   
-  else if(period >= 300){
+  else if(period >= 1500){
    play = '0';
    rate = 0;
    
-   //itoa(period,s1,10);
-   // drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
+   itoa(period,s1,10);
+    drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
   
    
   }
