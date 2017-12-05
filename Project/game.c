@@ -146,9 +146,9 @@ void moveLeftPaddleUP(MovLayer *m3){
     if(shapeBoundaryMovSqrs1.topLeft.axes[1]>15) {
   vec2Sub(&player1NewPos, &m3->layer->posNext, &m3->velocity);
       
-       itoa(shapeBoundaryMovSqrs1.topLeft.axes[1],splay1,10);
-        drawString5x7(30,30, "UP", COLOR_GREEN, COLOR_BLUE);
-       drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  //itoa(shapeBoundaryMovSqrs1.topLeft.axes[1],splay1,10);
+  //    drawString5x7(30,30, "UP", COLOR_GREEN, COLOR_BLUE);
+  //   drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		player1NewPos.axes[1] -= 2;
 		player1NewPos.axes[0] = 10;
   		  m3->layer->posNext = player1NewPos;
@@ -170,9 +170,9 @@ abShapeGetBounds(m3->layer->abShape, &player1NewPos, &shapeBoundaryMovSqrs1);
   if(shapeBoundaryMovSqrs1.botRight.axes[1]<149) {
   vec2Add(&player1NewPos, &m3->layer->posNext, &m3->velocity);
     
-       itoa(shapeBoundaryMovSqrs1.botRight.axes[1],splay1,10);
-        drawString5x7(30,30, "DOWN", COLOR_GREEN, COLOR_BLUE);
-       drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
+  //itoa(shapeBoundaryMovSqrs1.botRight.axes[1],splay1,10);
+       //    drawString5x7(30,30, "DOWN", COLOR_GREEN, COLOR_BLUE);
+       // drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE); 
   		player1NewPos.axes[1] += 2;
 		player1NewPos.axes[0] = 10;
   		  m3->layer->posNext = player1NewPos;
@@ -192,9 +192,9 @@ void moveRightPaddleUP(MovLayer *m3){
   //set a boundary
   abShapeGetBounds(m3->layer->abShape, &player2NewPos, &shapeBoundaryMovSqrs2);
 
-  itoa(shapeBoundaryMovSqrs2.topLeft.axes[1],splay1,10);
+  //itoa(shapeBoundaryMovSqrs2.topLeft.axes[1],splay1,10);
   //drawString5x7(30,30, "UP", COLOR_GREEN, COLOR_BLUE);
-       drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE);
+  //       drawString5x7(30,50, splay1, COLOR_GREEN, COLOR_BLUE);
        
     if(shapeBoundaryMovSqrs2.topLeft.axes[1]>15) {
   vec2Sub(&player2NewPos, &m3->layer->posNext, &m3->velocity);
@@ -512,8 +512,7 @@ void wdt_c_handler()
   
   if(++decisecond_count == 25){
     
-    if(play =='1'){
-      
+    if(play =='1'){    
     sound_advance_frequency();
     decisecond_count=0;
     }
@@ -523,6 +522,6 @@ void wdt_c_handler()
     
   }
   
-
+ 
   P1OUT &= ~GREEN_LED;		    /**< Green LED off when cpu off */
 }

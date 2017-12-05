@@ -4,11 +4,11 @@
 #include <lcdutils.h>
 char s1[5];
 static unsigned int period = 1000;
-static signed int rate = 500;	
+static signed int rate = 200;	
 char state;
 char play;
 #define MIN_PERIOD 1000
-#define MAX_PERIOD 1500
+#define MAX_PERIOD 4000
 
 
 
@@ -26,7 +26,7 @@ void sound_init()
     P2SEL &= ~BIT7; 
     P2SEL |= BIT6;
     P2DIR = BIT6;		/* enable output to speaker (P2.6) */
-    // state = '2';
+    //state = '2';
    
      sound_advance_frequency();/* start buzzing!!! */
 
@@ -52,23 +52,27 @@ void sound_advance_frequency()
 Sound One 
  */
 void soundOne(){
-  //period +=rate;
-  if ( period >= 1000  && period < 1500)   {
-    period += 500;
+  period +=rate;
+  if ( rate>0 && (period > MAX_PERIOD)||
+	(rate <0 && (period<MIN_PERIOD)))   {
+	rate =- rate;
+ 	period += (rate <<1);
+	play = '1';
     // printf("\nPeriodTop= %d",period);
     }
   
-  else if(period >= 1500){
+  else if(period == MAX_PERIOD){
    play = '0';
    rate = 0;
-   
-   itoa(period,s1,10);
-    drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
+   period =0;
+   //itoa(period,s1,10);
+   //drawString5x7(40,80, play , COLOR_GREEN, COLOR_BLUE);
   
    
   }
-  itoa(period,s1,10);
-    drawString5x7(40,80, s1 , COLOR_GREEN, COLOR_BLUE);
+      sound_set_period(period);
+      //itoa(period,s1,10);
+      //drawString5x7(40,80, s1 , COLOR_GREEN, COLOR_BLUE);
   
   
 }

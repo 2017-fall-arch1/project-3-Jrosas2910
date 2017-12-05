@@ -1,5 +1,5 @@
 
-#Lab 3: Pong Toy Game
+##Lab 3: Pong Toy Game
 ## Project Description 
 
 Pong Toy Game. 2 Players and two paddles. Every player has a score. The player with the highest score wins. 
